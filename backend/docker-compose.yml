@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  web:
+    image: backend:0.0.1-SNAPSHOT
+    tty: true
+    user: root
+    ports:
+      - "8080:8080"
