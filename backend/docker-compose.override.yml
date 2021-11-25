@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  web:
+    environment:
+      - AWS_ACCESS_KEY_ID=xxxx
+      - AWS_SECRET_ACCESS_KEY=xxxx
+      - AWS_REGION=ap-east-1
