@@ -13,7 +13,7 @@ rm -rf /home/ec2-user/deploy.sh
 cat > '/home/ec2-user/deploy.sh' <<- EOM
 #!/bin/bash
 
-`aws ecr get-login --no-include-email --region ap-east-1`
+\`aws ecr get-login --no-include-email --region ap-east-1\`
 docker-compose rm -f
 docker-compose pull
 docker-compose up -d

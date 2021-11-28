@@ -1,17 +1,18 @@
 import * as cdk from '@aws-cdk/core';
+import {RemovalPolicy} from '@aws-cdk/core';
 import * as ec2 from "@aws-cdk/aws-ec2";
+import {UserData} from "@aws-cdk/aws-ec2";
 import * as iam from '@aws-cdk/aws-iam';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
-import { CfnApp, CfnBranch, CustomRule, RedirectStatus } from '@aws-cdk/aws-amplify';
-import { KeyPair } from 'cdk-ec2-key-pair';
-import { ApplicationLoadBalancer, ApplicationProtocol } from '@aws-cdk/aws-elasticloadbalancingv2';
-import { InstanceTarget } from "@aws-cdk/aws-elasticloadbalancingv2-targets";
-import { EndpointType } from "@aws-cdk/aws-apigateway";
+import {CfnApp, CfnBranch, CustomRule, RedirectStatus} from '@aws-cdk/aws-amplify';
+import {KeyPair} from 'cdk-ec2-key-pair';
+import {ApplicationLoadBalancer, ApplicationProtocol} from '@aws-cdk/aws-elasticloadbalancingv2';
+import {InstanceTarget} from "@aws-cdk/aws-elasticloadbalancingv2-targets";
+import {EndpointType} from "@aws-cdk/aws-apigateway";
 
-import { Proxy } from "./proxy";
+import {Proxy} from "./proxy";
 import * as fs from 'fs';
 import * as path from 'path';
-import { UserData } from '@aws-cdk/aws-ec2';
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -19,7 +20,8 @@ export class InfraStack extends cdk.Stack {
 
     const table = new dynamodb.Table(this, 'Customer', {
       tableName: 'Customer',
-      partitionKey: { name: 'CustomerID', type: dynamodb.AttributeType.STRING },      
+      partitionKey: { name: 'CustomerID', type: dynamodb.AttributeType.STRING },
+      removalPolicy: RemovalPolicy.DESTROY
     });
 
     const backendEc2AccessKey = new KeyPair(this, 'aws-training-backend-ec2-key', {
@@ -166,7 +168,7 @@ applications:
     new cdk.CfnOutput(this, 'Backend Load Balancer Domain', { value: backendLB.loadBalancerDnsName });
     new cdk.CfnOutput(this, 'Backend EC2 IP Address', { value: backendEc2Instance.instancePublicIp });
     new cdk.CfnOutput(this, 'Backend EC2 Key Name', { value: backendEc2AccessKey.keyPairName })
-    new cdk.CfnOutput(this, 'Backend Download EC2 Access Key Command', { value: 'rm -f cdk-key.pem & aws secretsmanager get-secret-value --secret-id ec2-ssh-key/' + backendEc2AccessKey.keyPairName + '/private --query SecretString --output text > cdk-key.pem && chmod 400 cdk-key.pem' })
+    new cdk.CfnOutput(this, 'Backend Download EC2 Access Key Command', { value: 'rm -f cdk-key.pem && aws secretsmanager get-secret-value --secret-id ec2-ssh-key/' + backendEc2AccessKey.keyPairName + '/private --query SecretString --output text > cdk-key.pem && chmod 400 cdk-key.pem' })
     new cdk.CfnOutput(this, 'Backend EC2 ssh command', { value: 'ssh -i cdk-key.pem -o IdentitiesOnly=yes ec2-user@' + backendEc2Instance.instancePublicIp })
   }
 }
