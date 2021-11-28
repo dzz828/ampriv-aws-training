@@ -27,7 +27,7 @@ cat > '/home/ec2-user/docker-compose.yml' <<- EOM
 version: "3.9"
 services:
   web:
-    image: xxxxxx
+    image: xxxx.dkr.ecr.ap-east-1.amazonaws.com/aws-training-backend:latest
     tty: true
     user: root
     ports:
